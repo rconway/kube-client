@@ -11,22 +11,23 @@ import (
 )
 
 func main() {
+	// Load kubeconfig
 	config, err := clientcmd.BuildConfigFromFlags("", "/home/rconway/.kube/config")
 	if err != nil {
 		panic(err.Error())
-	}
-	// fmt.Printf("%s - %s\n", config, err)
+	} // fmt.Printf("%s - %s\n", config, err)
 
+	// Create client
 	clientset, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		panic(err.Error())
 	}
 
+	// Get pods
 	pods, err := clientset.CoreV1().Pods("").List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		panic(err.Error())
 	}
-	fmt.Printf("There are %d pods in the cluster\n", len(pods.Items))
 
 	// Print pod details
 	fmt.Println("----")
@@ -38,4 +39,6 @@ func main() {
 		fmt.Printf("Age: %s\n", time.Since(pod.CreationTimestamp.Time).Round(time.Second))
 		fmt.Println("----")
 	}
+	fmt.Printf("There are %d pods in the cluster\n", len(pods.Items))
+	fmt.Println("----")
 }
